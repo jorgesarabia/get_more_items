@@ -21,10 +21,10 @@ class _BodyState extends State<_Body> {
     return Column(
       children: [
         Expanded(child: _Messages(_repository)),
-        ElevatedButton(
-          onPressed: () => _repository.loadMoreMessages(),
-          child: const Text('Get more messages'),
-        ),
+        //   ElevatedButton(
+        //     onPressed: () => _repository.loadMoreMessages(),
+        //     child: const Text('Get more messages'),
+        //   ),
       ],
     );
   }

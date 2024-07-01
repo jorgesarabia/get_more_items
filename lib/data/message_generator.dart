@@ -1,17 +1,11 @@
 import 'dart:math';
 
+import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:get_more_items/domain/message_entity.dart';
 
 class MessageGenerator {
   int id = 0;
   final Random _random = Random();
-  final List<String> _messages = [
-    'Hello, world!',
-    'Dart is awesome!',
-    'Flutter makes beautiful apps!',
-    'Random message generator!',
-    'Coding is fun!',
-  ];
 
   MessageEntity generate() {
     final String message = _generateRandomMessage();
@@ -19,6 +13,6 @@ class MessageGenerator {
   }
 
   String _generateRandomMessage() {
-    return _messages[_random.nextInt(_messages.length)];
+    return lorem(paragraphs: _random.nextInt(2) + 1, words: _random.nextInt(95) + 5);
   }
 }

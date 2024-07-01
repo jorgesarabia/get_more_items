@@ -50,9 +50,8 @@ class MessageRepositoryImpl implements MessageRepository {
   Stream<List<MessageEntity>> listenForNewMessages() {
     if (_messageController?.isClosed ?? true) {
       _messageController = StreamController.broadcast();
+      getMessages();
     }
-
-    getMessages();
 
     return _messageController!.stream;
   }

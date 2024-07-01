@@ -1,7 +1,10 @@
 part of '../chat_screen.dart';
 
 class _MessageContainer extends StatefulWidget {
-  const _MessageContainer({required this.message});
+  const _MessageContainer({
+    super.key,
+    required this.message,
+  });
 
   final MessageEntity message;
 
@@ -42,7 +45,12 @@ class _MessageContainerState extends State<_MessageContainer> {
       child: Container(
         padding: const EdgeInsets.all(8),
         color: getColorFromInt(_messageEntity.id),
-        child: Text(_messageEntity.message),
+        child: Column(
+          children: [
+            Text('ID: ${_messageEntity.id}'),
+            Text(_messageEntity.message),
+          ],
+        ),
       ),
     );
   }

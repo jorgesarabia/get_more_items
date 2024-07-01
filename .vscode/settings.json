@@ -1,0 +1,38 @@
+{
+  "dart.previewFlutterUiGuides": true,
+  "dart.previewFlutterUiGuidesCustomTracking": true,
+  "dart.lineLength": 120,
+  "dart.enableSdkFormatter": true,
+  "dart.buildRunnerAdditionalArgs": ["--delete-conflicting-outputs"],
+  "dart.warnWhenEditingFilesOutsideWorkspace": true,
+  "dart.debugSdkLibraries": false,
+  "[dart]": {
+    "editor.defaultFormatter": "Dart-Code.dart-code",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [120],
+    "editor.wordBasedSuggestions": "matchingDocuments",
+    "files.insertFinalNewline": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.detectIndentation": true,
+  },
+  "[shellscript]":{
+    "editor.tabSize": 2,
+  },
+  "files.exclude": {
+    "**/*.freezed.dart": true,
+    "**/*.mocks.dart": true,
+    "**/*.g.dart": true
+  },
+}

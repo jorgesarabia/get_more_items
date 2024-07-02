@@ -9,6 +9,7 @@ class MessageRepositoryImpl implements MessageRepository {
 
   final MessageGenerator messageGenerator;
   final Set<MessageEntity> _messages = {};
+  final List<MessageEntity> _loadedMessages = [];
 
   StreamController<List<MessageEntity>>? _messageController;
 
@@ -24,10 +25,29 @@ class MessageRepositoryImpl implements MessageRepository {
   @override
   Future<void> loadMoreMessages() async {
     await Future.delayed(const Duration(seconds: 2));
-    final messages = List.generate(2, (_) {
-      return messageGenerator.generate();
-    });
-    _loadMessages(messages: messages, isAfter: false);
+    if (_loadedMessages.isEmpty) {
+      final messages = List.generate(20, (_) {
+        return messageGenerator.generate();
+      });
+      _loadedMessages.addAll(messages.reversed);
+    }
+
+    _sendLessMessages();
+  }
+
+  void _sendLessMessages() {
+    late final List<MessageEntity> poppedList;
+    if (_loadedMessages.length >= 2) {
+      int firstIndex = 0;
+      int secondIndex = 1;
+      poppedList = _loadedMessages.sublist(firstIndex, secondIndex + 1);
+      _loadedMessages.removeRange(firstIndex, secondIndex + 1);
+    } else {
+      poppedList = [_loadedMessages[0]];
+      _loadedMessages.removeLast();
+    }
+
+    _loadMessages(messages: poppedList, isAfter: false);
   }
 
   void _loadMessages({required List<MessageEntity> messages, bool isAfter = true}) {

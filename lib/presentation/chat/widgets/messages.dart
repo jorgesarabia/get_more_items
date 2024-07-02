@@ -53,7 +53,10 @@ class _MessagesState extends State<_Messages> {
     final position = _scrollController?.position;
     if (position == null || _messages.isEmpty) return;
 
-    if (position.pixels > 20 || _isGettingMoreMessages) return;
+    if (position.pixels > position.maxScrollExtent - 20 || _isGettingMoreMessages) return;
+
+    print(position.pixels);
+    print(position.maxScrollExtent);
 
     setState(() => _isGettingMoreMessages = true);
 
@@ -76,6 +79,7 @@ class _MessagesState extends State<_Messages> {
         _messages = snapshot.data ?? [];
 
         return ListView.builder(
+          reverse: true,
           controller: _scrollController,
           itemCount: _messages.length,
           itemBuilder: (context, index) {
@@ -87,7 +91,7 @@ class _MessagesState extends State<_Messages> {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (_isGettingMoreMessages && index == 0) const CircularProgressIndicator(),
+                if (_isGettingMoreMessages && index == _messages.length - 1) const CircularProgressIndicator(),
                 _MessageContainer(
                   key: Key(_messages[index].id.toString()),
                   message: _messages[index],

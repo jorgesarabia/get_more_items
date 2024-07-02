@@ -27,12 +27,13 @@ class MessageRepositoryImpl implements MessageRepository {
     final messages = List.generate(2, (_) {
       return messageGenerator.generate();
     });
-    _loadMessages(messages: messages, isAfter: false);
+    _loadMessages(messages: messages, isAfter: true);
   }
 
-  void _loadMessages({required List<MessageEntity> messages, bool isAfter = true}) {
+  void _loadMessages({required List<MessageEntity> messages, bool isAfter = false}) {
     if (messages.isEmpty) return;
     final messageList = _messages.toList();
+    // messageList.sort((a, b) => a.id.compareTo(b.id));
 
     _messages.clear();
 
@@ -42,7 +43,7 @@ class MessageRepositoryImpl implements MessageRepository {
       messageList.insertAll(0, messages);
     }
 
-    _messages.addAll(messageList);
+    _messages.addAll(messageList.reversed);
     _messageController?.add(_messages.toList());
   }
 

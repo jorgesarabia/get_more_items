@@ -60,19 +60,19 @@ class _MessagesState extends State<_Messages> {
     _mustNotJumpToBottom = true;
     await _messageRepository.loadMoreMessages();
     setState(() => _isGettingMoreMessages = false);
-    await Future.delayed(const Duration(seconds: 1));
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    final newScrollExtent = _scrollController!.position.maxScrollExtent;
-    final diff = newScrollExtent - oldScrollExtent;
-    print('[Scroll] === ==== === == ');
-    print('[Scroll] old: $oldScrollExtent');
-    print('[Scroll] new: $newScrollExtent');
-    print('[Scroll] diff: $diff');
-    print('[Scroll] === ==== === == ');
-    print('[Scroll] ');
-    _scrollController?.jumpTo(diff);
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final newScrollExtent = _scrollController!.position.maxScrollExtent;
+      final diff = newScrollExtent - oldScrollExtent;
+      print('[Scroll] === ==== === == ');
+      print('[Scroll] old: $oldScrollExtent');
+      print('[Scroll] new: $newScrollExtent');
+      print('[Scroll] diff: $diff');
+      print('[Scroll] === ==== === == ');
+      print('[Scroll] ');
+      Future.delayed(const Duration(milliseconds: 200));
+      _scrollController?.jumpTo(diff);
+    });
   }
 
   @override

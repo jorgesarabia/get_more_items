@@ -15,6 +15,8 @@ class _MessagesState extends State<_Messages> {
   bool _isGettingMoreMessages = false;
   int _lastLength = 0;
   bool _mustNotJumpToBottom = false;
+  final Set<MessageSizeHelper> _oldSet = {};
+  final Set<MessageSizeHelper> _newSet = {};
   late final MessageRepository _messageRepository;
 
   @override
@@ -52,16 +54,20 @@ class _MessagesState extends State<_Messages> {
   Future<void> _loadMoreMessages() async {
     final position = _scrollController?.position;
     if (position == null || _messages.isEmpty) return;
-
     if (position.pixels > 20 || _isGettingMoreMessages) return;
 
     setState(() => _isGettingMoreMessages = true);
+
+    _oldSet.addAll(_newSet.toList());
 
     _mustNotJumpToBottom = true;
     await _messageRepository.loadMoreMessages();
 
     setState(() => _isGettingMoreMessages = false);
-    // WidgetsBinding.instance.addPostFrameCallback((_) => _scrollTo());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final heigth = _computeHeight();
+      _scrollController?.jumpTo(heigth);
+    });
   }
 
   @override
@@ -84,13 +90,22 @@ class _MessagesState extends State<_Messages> {
               _scrollTo();
             }
 
+            final messageEntity = _messages[index];
+
+            _newSet.add(
+              MessageSizeHelper(
+                id: messageEntity.id,
+                height: calculateSize(messageEntity).height,
+              ),
+            );
+
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (_isGettingMoreMessages && index == 0) const CircularProgressIndicator(),
                 _MessageContainer(
-                  key: Key(_messages[index].id.toString()),
-                  message: _messages[index],
+                  key: Key(messageEntity.id.toString()),
+                  message: messageEntity,
                 ),
               ],
             );
@@ -98,5 +113,42 @@ class _MessagesState extends State<_Messages> {
         );
       },
     );
+  }
+
+  double _computeHeight() {
+    final diff = _newSet.difference(_oldSet);
+    double newHeight = 0.0;
+    for (var element in diff) {
+      newHeight += element.height;
+    }
+
+    return newHeight;
+  }
+
+  Size calculateSize(MessageEntity messageEntity) {
+    final textStyle = DefaultTextStyle.of(context).style;
+    final maxWidth = MediaQuery.of(context).size.width - 16 * 2;
+
+    final idTextPainter = TextPainter(
+      text: TextSpan(text: 'ID: ${messageEntity.id}', style: textStyle),
+      textDirection: TextDirection.ltr,
+      maxLines: null,
+    )..layout(maxWidth: maxWidth);
+
+    final messageTextPainter = TextPainter(
+      text: TextSpan(text: messageEntity.message, style: textStyle),
+      textDirection: TextDirection.ltr,
+      maxLines: null,
+    )..layout(maxWidth: maxWidth);
+
+    final idTextSize = idTextPainter.size;
+    final messageTextSize = messageTextPainter.size;
+
+    final totalWidth = max(idTextSize.width, messageTextSize.width) + 2 * 8;
+    final totalHeight = idTextSize.height + messageTextSize.height + 2 * 8;
+
+    final totalSize = Size(totalWidth + 2 * 8, totalHeight + 2 * 8);
+
+    return totalSize;
   }
 }

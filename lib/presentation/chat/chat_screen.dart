@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get_more_items/data/message_generator.dart';
 import 'package:get_more_items/data/message_repository_impl.dart';
 import 'package:get_more_items/domain/message_entity.dart';
 import 'package:get_more_items/domain/message_repository.dart';
+import 'package:get_more_items/presentation/chat/models/message_size_helper.dart';
 
 part 'widgets/body.dart';
 part 'widgets/message_container.dart';

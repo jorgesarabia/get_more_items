@@ -24,12 +24,14 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<void> loadMoreMessages() async {
-    await Future.delayed(const Duration(seconds: 2));
     if (_loadedMessages.isEmpty) {
+      await Future.delayed(const Duration(seconds: 2));
       final messages = List.generate(20, (_) {
         return messageGenerator.generate();
       });
       _loadedMessages.addAll(messages.reversed);
+    } else {
+      await Future.delayed(const Duration(milliseconds: 100));
     }
 
     _sendLessMessages();

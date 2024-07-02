@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+part 'widgets/body.dart';
+
 class InfiniteScroll extends StatelessWidget {
   const InfiniteScroll({super.key});
 

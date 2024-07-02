@@ -82,7 +82,7 @@ class _MessagesState extends State<_Messages> {
       final diff = (newBefore - oldBefore) + (newAfter - oldAfter);
       print('[Scroll] diff $diff');
       print('[Scroll]');
-      _scrollController?.jumpTo(diff);
+      _scrollController?.jumpTo(position.pixels + diff);
     });
   }
 

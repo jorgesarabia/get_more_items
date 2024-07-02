@@ -24,7 +24,7 @@ class MessageRepositoryImpl implements MessageRepository {
   @override
   Future<void> loadMoreMessages() async {
     await Future.delayed(const Duration(seconds: 2));
-    final messages = List.generate(2, (_) {
+    final messages = List.generate(20, (_) {
       return messageGenerator.generate();
     });
     _loadMessages(messages: messages, isAfter: false);

@@ -52,8 +52,17 @@ class _MessagesState extends State<_Messages> {
   Future<void> _loadMoreMessages() async {
     final position = _scrollController?.position;
     if (position == null || _messages.isEmpty) return;
-
     if (position.pixels > 20 || _isGettingMoreMessages) return;
+
+    print('[Scroll] ====================');
+    print('[Scroll] before ${position.extentBefore}');
+    print('[Scroll] after ${position.extentAfter}');
+    print('[Scroll] inside ${position.extentInside}');
+    print('[Scroll] total ${position.extentTotal}');
+    print('[Scroll] extent ${position.maxScrollExtent}');
+    print('[Scroll]');
+    final oldBefore = position.extentBefore;
+    final oldAfter = position.extentAfter;
 
     setState(() => _isGettingMoreMessages = true);
 
@@ -61,7 +70,20 @@ class _MessagesState extends State<_Messages> {
     await _messageRepository.loadMoreMessages();
 
     setState(() => _isGettingMoreMessages = false);
-    // WidgetsBinding.instance.addPostFrameCallback((_) => _scrollTo());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final p = _scrollController!.position;
+      print('[Scroll] before ${p.extentBefore}');
+      print('[Scroll] after ${p.extentAfter}');
+      print('[Scroll] inside ${p.extentInside}');
+      print('[Scroll] total ${p.extentTotal}');
+      print('[Scroll] maxExtent ${p.maxScrollExtent}');
+      final newBefore = position.extentBefore;
+      final newAfter = position.extentAfter;
+      final diff = (newBefore - oldBefore) + (newAfter - oldAfter);
+      print('[Scroll] diff $diff');
+      print('[Scroll]');
+      _scrollController?.jumpTo(diff);
+    });
   }
 
   @override

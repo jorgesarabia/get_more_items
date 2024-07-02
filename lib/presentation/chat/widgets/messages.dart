@@ -18,6 +18,7 @@ class _MessagesState extends State<_Messages> {
   final Set<MessageSizeHelper> _oldSet = {};
   final Set<MessageSizeHelper> _newSet = {};
   late final MessageRepository _messageRepository;
+  int _getLenght = 0;
 
   @override
   void initState() {
@@ -56,14 +57,15 @@ class _MessagesState extends State<_Messages> {
     if (position == null || _messages.isEmpty) return;
     if (position.pixels > 20 || _isGettingMoreMessages) return;
 
-    setState(() => _isGettingMoreMessages = true);
+    if (_getLenght == 0) setState(() => _isGettingMoreMessages = true);
 
     _oldSet.addAll(_newSet.toList());
 
     _mustNotJumpToBottom = true;
-    await _messageRepository.loadMoreMessages();
+    _getLenght = await _messageRepository.loadMoreMessages();
 
-    setState(() => _isGettingMoreMessages = false);
+    if (_isGettingMoreMessages) setState(() => _isGettingMoreMessages = false);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final heigth = _computeHeight();
       _scrollController?.jumpTo(heigth);

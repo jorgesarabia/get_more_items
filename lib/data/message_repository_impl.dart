@@ -8,57 +8,22 @@ class MessageRepositoryImpl implements MessageRepository {
   MessageRepositoryImpl(this.messageGenerator);
 
   final MessageGenerator messageGenerator;
-  final Set<MessageEntity> _messages = {};
-
-  StreamController<List<MessageEntity>>? _messageController;
 
   @override
-  Future<void> getMessages() async {
+  Future<List<MessageEntity>> getMessages() async {
     await Future.delayed(const Duration(seconds: 2));
-    final messages = List.generate(5, (_) {
+    final messages = List.generate(10, (_) {
       return messageGenerator.generate();
     });
-    _loadMessages(messages: messages);
+    return messages;
   }
 
   @override
-  Future<void> loadMoreMessages() async {
+  Future<List<MessageEntity>> loadMoreMessages() async {
     await Future.delayed(const Duration(seconds: 2));
-    final messages = List.generate(2, (_) {
+    final messages = List.generate(20, (_) {
       return messageGenerator.generate();
     });
-    _loadMessages(messages: messages, isAfter: false);
-  }
-
-  void _loadMessages({required List<MessageEntity> messages, bool isAfter = true}) {
-    if (messages.isEmpty) return;
-    final messageList = _messages.toList();
-
-    _messages.clear();
-
-    if (isAfter) {
-      messageList.addAll(messages);
-    } else {
-      messageList.insertAll(0, messages);
-    }
-
-    _messages.addAll(messageList);
-    _messageController?.add(_messages.toList());
-  }
-
-  @override
-  Stream<List<MessageEntity>> listenForNewMessages() {
-    if (_messageController?.isClosed ?? true) {
-      _messageController = StreamController.broadcast();
-      getMessages();
-    }
-
-    return _messageController!.stream;
-  }
-
-  @override
-  Future<void> stopListening() async {
-    await _messageController?.close();
-    _messageController = null;
+    return messages;
   }
 }

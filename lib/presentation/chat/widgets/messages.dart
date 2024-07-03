@@ -15,6 +15,9 @@ class _MessagesState extends State<_Messages> {
   bool _isGettingMoreMessages = false;
   int _lastLength = 0;
   bool _mustNotJumpToBottom = false;
+  int _targetId = -1;
+
+  final _globalKey = GlobalKey();
   late final MessageRepository _messageRepository;
 
   @override
@@ -56,47 +59,86 @@ class _MessagesState extends State<_Messages> {
     if (position.pixels > 20 || _isGettingMoreMessages) return;
 
     setState(() => _isGettingMoreMessages = true);
-
     _mustNotJumpToBottom = true;
+    _targetId = _messages.first.id;
     await _messageRepository.loadMoreMessages();
 
-    setState(() => _isGettingMoreMessages = false);
-    // WidgetsBinding.instance.addPostFrameCallback((_) => _scrollTo());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      double jumpInside = _scrollController!.position.extentInside - 100;
+      for (int x = 0; x < 1000; x++) {
+        final targetContext = _globalKey.currentContext;
+        final position = _scrollController!.position.pixels;
+        if (targetContext == null) {
+          await Future.delayed(const Duration(milliseconds: 100));
+          _scrollController?.jumpTo(position + jumpInside);
+        } else {
+          final renderBox = targetContext.findRenderObject() as RenderBox?;
+          final offset = renderBox?.localToGlobal(Offset.zero).dy;
+          if (offset != null) {
+            _scrollController?.jumpTo(position + offset);
+            x = 2000;
+          }
+          Scrollable.ensureVisible(
+            targetContext,
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeInOut,
+          );
+        }
+      }
+      setState(() => _isGettingMoreMessages = false);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: _messageRepository.listenForNewMessages(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        _messages = snapshot.data ?? [];
-
-        return ListView.builder(
-          controller: _scrollController,
-          itemCount: _messages.length,
-          itemBuilder: (context, index) {
-            if (_messages.length != _lastLength) {
-              _lastLength = index + 1;
-              _scrollTo();
+    return Stack(
+      children: [
+        StreamBuilder(
+          stream: _messageRepository.listenForNewMessages(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
             }
 
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_isGettingMoreMessages && index == 0) const CircularProgressIndicator(),
-                _MessageContainer(
-                  key: Key(_messages[index].id.toString()),
-                  message: _messages[index],
-                ),
-              ],
+            _messages = snapshot.data ?? [];
+
+            return ListView.builder(
+              controller: _scrollController,
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                if (_messages.length != _lastLength) {
+                  _lastLength = index + 1;
+                  _scrollTo();
+                }
+
+                final message = _messages[index];
+
+                return Column(
+                  key: message.id == _targetId ? _globalKey : null,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // if (_isGettingMoreMessages && index == 0) const CircularProgressIndicator(),
+                    _MessageContainer(
+                      key: Key(message.id.toString()),
+                      message: message,
+                    ),
+                  ],
+                );
+              },
             );
           },
-        );
-      },
+        ),
+        if (_isGettingMoreMessages)
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Container(
+              color: Colors.black.withOpacity(1),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

@@ -63,7 +63,7 @@ class _MessagesState extends State<_Messages> {
     // print(position.maxScrollExtent);
     final diff = position.maxScrollExtent - position.pixels;
     print(diff);
-    if (diff > 50 || _isGettingMoreMessages) return;
+    if (diff > 500 || _isGettingMoreMessages) return;
 
     setState(() => _isGettingMoreMessages = true);
 

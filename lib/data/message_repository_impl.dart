@@ -15,9 +15,10 @@ class MessageRepositoryImpl implements MessageRepository {
   @override
   Future<void> getMessages() async {
     await Future.delayed(const Duration(seconds: 2));
-    final messages = List.generate(5, (_) {
+    final messages = List.generate(10, (_) {
       return messageGenerator.generate();
     });
+    messages.sort((a, b) => a.id.compareTo(b.id));
     _loadMessages(messages: messages);
   }
 
@@ -27,13 +28,13 @@ class MessageRepositoryImpl implements MessageRepository {
     final messages = List.generate(2, (_) {
       return messageGenerator.generate();
     });
+    messages.sort((a, b) => a.id.compareTo(b.id));
     _loadMessages(messages: messages, isAfter: true);
   }
 
   void _loadMessages({required List<MessageEntity> messages, bool isAfter = false}) {
     if (messages.isEmpty) return;
     final messageList = _messages.toList();
-    // messageList.sort((a, b) => a.id.compareTo(b.id));
 
     _messages.clear();
 

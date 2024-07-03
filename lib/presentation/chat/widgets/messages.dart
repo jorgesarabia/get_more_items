@@ -62,7 +62,7 @@ class _MessagesState extends State<_Messages> {
     if (diff > 20 || _isGettingMoreMessages) return;
 
     _isGettingMoreMessages = true;
-    // setState(() => _isGettingMoreMessages = true);
+    setState(() => _isGettingMoreMessages = true);
     // double previousOffset = _scrollController!.position.maxScrollExtent;
 
     _mustNotJumpToBottom = true;
@@ -70,7 +70,7 @@ class _MessagesState extends State<_Messages> {
     // _isGettingMoreMessages = false;
     // _scrollController?.jumpTo(_scrollController!.position.maxScrollExtent - previousOffset);
 
-    // setState(() => _isGettingMoreMessages = false);
+    setState(() => _isGettingMoreMessages = false);
     // WidgetsBinding.instance.addPostFrameCallback((_) => _scrollTo());
   }
 
@@ -99,7 +99,7 @@ class _MessagesState extends State<_Messages> {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // if (_isGettingMoreMessages && index == _messages.length - 1) const CircularProgressIndicator(),
+                if (_isGettingMoreMessages && index == _messages.length - 1) const CircularProgressIndicator(),
                 _MessageContainer(
                   key: Key(_messages[index].id.toString()),
                   message: _messages[index],

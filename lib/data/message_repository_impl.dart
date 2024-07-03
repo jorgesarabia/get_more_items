@@ -18,7 +18,7 @@ class MessageRepositoryImpl implements MessageRepository {
     final messages = List.generate(10, (_) {
       return messageGenerator.generate();
     });
-    messages.sort((a, b) => a.id.compareTo(b.id));
+    // messages.sort((a, b) => a.id.compareTo(b.id));
     _loadMessages(messages: messages);
   }
 
@@ -28,11 +28,11 @@ class MessageRepositoryImpl implements MessageRepository {
     final messages = List.generate(2, (_) {
       return messageGenerator.generate();
     });
-    messages.sort((a, b) => a.id.compareTo(b.id));
-    _loadMessages(messages: messages, isAfter: true);
+    // messages.sort((a, b) => a.id.compareTo(b.id));
+    _loadMessages(messages: messages);
   }
 
-  void _loadMessages({required List<MessageEntity> messages, bool isAfter = false}) {
+  void _loadMessages({required List<MessageEntity> messages, bool isAfter = true}) {
     if (messages.isEmpty) return;
     final messageList = _messages.toList();
 
@@ -44,7 +44,7 @@ class MessageRepositoryImpl implements MessageRepository {
       messageList.insertAll(0, messages);
     }
 
-    _messages.addAll(messageList.reversed);
+    _messages.addAll(messageList);
     _messageController?.add(_messages.toList());
   }
 
